@@ -83,7 +83,7 @@ public final class Typer {
             int utflen = array.length;
             if (utflen > 0 && utflen <= Short.MAX_VALUE) {
                 ByteBuffer byteBuffer = ByteBuffer
-                        .wrap(new byte[(utflen << 2) + 2])
+                        .wrap(new byte[(utflen << 3) + 2])
                         .putShort((short) utflen);
                 for(long i : array) {
                     byteBuffer.putLong(i);
@@ -126,7 +126,7 @@ public final class Typer {
             int utflen = array.length;
             if (utflen > 0 && utflen <= Short.MAX_VALUE) {
                 ByteBuffer byteBuffer = ByteBuffer
-                        .wrap(new byte[(utflen << 2) + 2])
+                        .wrap(new byte[(utflen << 1) + 2])
                         .putShort((short) utflen);
                 for(short i : array) {
                     byteBuffer.putShort(i);
@@ -169,7 +169,7 @@ public final class Typer {
             int utflen = array.length;
             if (utflen > 0 && utflen <= Short.MAX_VALUE) {
                 ByteBuffer byteBuffer = ByteBuffer
-                        .wrap(new byte[(utflen << 2) + 2])
+                        .wrap(new byte[(utflen << 1) + 2])
                         .putShort((short) utflen);
                 for(char i : array) {
                     byteBuffer.putChar(i);
@@ -209,7 +209,7 @@ public final class Typer {
             int utflen = array.length;
             if (utflen > 0 && utflen <= Short.MAX_VALUE) {
                 ByteBuffer byteBuffer = ByteBuffer
-                        .wrap(new byte[(utflen << 2) + 2])
+                        .wrap(new byte[(utflen << 3) + 2])
                         .putShort((short) utflen);
                 for(double i : array) {
                     byteBuffer.putDouble(i);
@@ -287,7 +287,7 @@ public final class Typer {
             int utflen = array.length;
             if (utflen > 0 && utflen <= Short.MAX_VALUE) {
                 ByteBuffer byteBuffer = ByteBuffer
-                        .wrap(new byte[(utflen << 2) + 2])
+                        .wrap(new byte[(utflen) + 2])
                         .putShort((short) utflen);
                 for(boolean b : array) {
                     byteBuffer.put((byte) (b ? 1 : 0));
@@ -325,7 +325,7 @@ public final class Typer {
         public byte[] write(@NotNull byte[] array) {
             int utflen = array.length;
             if (utflen > 0 && utflen <= Short.MAX_VALUE) {
-                return ByteBuffer.wrap(new byte[(utflen << 2) + 2])
+                return ByteBuffer.wrap(new byte[(utflen) + 2])
                         .putShort((short) utflen)
                         .put(array)
                         .array();

@@ -19,32 +19,34 @@ public final class Example {
 
     public static void main(String[] args) {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            ObjectSerializer.serialize(new short[]{99, 7, 256, 26, 5212, 42}, outputStream);
-
+            ObjectSerializer.serialize(new Obj(), outputStream);
+            System.out.println(Arrays.toString(outputStream.toByteArray()));
             try (ByteArrayInputStream input = new ByteArrayInputStream(outputStream.toByteArray())) {
-                short[] array = ObjectSerializer.deserialize(input, short[].class);
-                System.out.println(Arrays.toString(array));
+                Obj0 array = ObjectSerializer.deserialize(input, Obj0.class);
+                System.out.println(array);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    }//[0, 3, 0, 3, 1, 1, 1, 0, 3, 0, 0, 0, 0, 3, 1, 1, 1]
     public static class Obj {
-        public int s = 9999;
-        public final Integer[] i = {7, 7, 5};
+        public boolean[][] array = {
+                {true, true, true},
+                {false, false, false},
+                {true, true, true}
+        };
 
         @Override
         public String toString() {
-            return Arrays.toString(i) + ' ' +s;
+            return Arrays.deepToString(array);
         }
     }
     public static class Obj0 {
-        public int s;
-        public int[] i;
+        public boolean[][] array;
 
         @Override
         public String toString() {
-            return Arrays.toString(i) + ' ' +s;
+            return Arrays.deepToString(array);
         }
     }
 }
