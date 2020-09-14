@@ -4,6 +4,7 @@ import jolyjdia.test.util.serial.ObjectSerializer;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 
 public final class Example {
@@ -17,15 +18,16 @@ public final class Example {
     private Example() {}
 
     public static void main(String[] args) {
-        System.out.println(Object[].class);
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            ObjectSerializer.serialize(new short[]{99, 7, 256, 26, 5212, 42}, outputStream);
 
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        ObjectSerializer.serialize(new int[]{99, 7, 256, 26, 5212, 42}, byteArrayOutputStream);
-
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-
-        int[] array = ObjectSerializer.deserialize(byteArrayInputStream, int[].class);
-        System.out.println(Arrays.toString(array));
+            try (ByteArrayInputStream input = new ByteArrayInputStream(outputStream.toByteArray())) {
+                short[] array = ObjectSerializer.deserialize(input, short[].class);
+                System.out.println(Arrays.toString(array));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     public static class Obj {
         public int s = 9999;

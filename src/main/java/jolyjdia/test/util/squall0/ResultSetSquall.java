@@ -15,7 +15,7 @@ public abstract class ResultSetSquall extends AbstractSquall.StatelessFunc<Resul
     protected ResultSetSquall(AbstractSquall<?> squall) {
         super(squall);
     }
-    //TODO: проверить на утечку памяти
+
     public <R> AbstractSquall<R> collect(Supplier<? extends R> supplier, BiConsumerResultSet<? super R> accumulator) {
         Objects.requireNonNull(supplier);
         Objects.requireNonNull(accumulator);

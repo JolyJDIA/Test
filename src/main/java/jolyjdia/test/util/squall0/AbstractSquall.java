@@ -8,7 +8,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Supplier;
 
 //ОФК все отредачить
 public class AbstractSquall<S_OUT> implements Squall<S_OUT> {
@@ -18,7 +17,7 @@ public class AbstractSquall<S_OUT> implements Squall<S_OUT> {
     final AbstractSquall<?> sourceSquall;
     final PreparedStatement preparedStatement;
 
-    List<AbstractSquall<?>> listSteps;
+    List<StatelessFunc<?>> listSteps;
     Runnable closeAction;
     Connection connection;
 
@@ -55,7 +54,6 @@ public class AbstractSquall<S_OUT> implements Squall<S_OUT> {
         return this;
     }
 
-    //оно не работает
     /**======================================================================
     * --------------------------------{Test}--------------------------------
     ======================================================================*/
@@ -87,18 +85,6 @@ public class AbstractSquall<S_OUT> implements Squall<S_OUT> {
         };
     }
 
-    @Override
-    public AbstractSquall<S_OUT> rollbackIf(Supplier<Boolean> filter) {
-        Objects.requireNonNull(filter);
-        if(filter.get()) {
-            try {
-                sourceSquall.connection.rollback();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return this;
-    }
     protected void checkRollback() {
         try {
             if(!sourceSquall.connection.getAutoCommit()) {
@@ -190,22 +176,20 @@ public class AbstractSquall<S_OUT> implements Squall<S_OUT> {
         };
     }
 
-    public <R> R opWrapSink(PreparedStatement preparedStatement) throws SQLException {
-        throw new UnsupportedOperationException();
-    }
 
-    public abstract static class StatelessFunc<R> extends AbstractSquall<R> {
+    public abstract static class StatelessFunc<T> extends AbstractSquall<T> {
         protected StatelessFunc(AbstractSquall<?> squall) {
             super(squall);
             sourceSquall.listSteps.add(this);
         }
+        public abstract <R> R opWrapSink(PreparedStatement preparedStatement) throws SQLException;
     }
 
     @Override
     public S_OUT sync() {
         try {
             S_OUT result = null;
-            for (AbstractSquall<?> step : sourceSquall.listSteps) {
+            for (StatelessFunc<?> step : sourceSquall.listSteps) {
                 System.out.println(step);
                 result = step.opWrapSink(step.preparedStatement);
             }
