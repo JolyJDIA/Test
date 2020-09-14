@@ -19,11 +19,11 @@ public final class Example {
 
     public static void main(String[] args) {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            ObjectSerializer.serialize(new Obj(), outputStream);
+            ObjectSerializer.serialize(new Obj[]{new Obj(), new Obj()}, outputStream);
             System.out.println(Arrays.toString(outputStream.toByteArray()));
             try (ByteArrayInputStream input = new ByteArrayInputStream(outputStream.toByteArray())) {
-                Obj0 array = ObjectSerializer.deserialize(input, Obj0.class);
-                System.out.println(array);
+                Obj0[] array = ObjectSerializer.deserialize(input, Obj0[].class);
+                System.out.println(Arrays.toString(array));
             }
         } catch (IOException e) {
             e.printStackTrace();
