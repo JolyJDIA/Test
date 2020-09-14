@@ -12,14 +12,14 @@ import java.util.UUID;
 
 public final class ObjectSerializer {
     private static final Map<Type, Handler<?>> TYPE_PRODUCERS = ImmutableMap.<Type, Handler<?>>builder()
-            .put(int.class, Typer.INTEGER).put(int[].class, Typer.INTS).put(Integer.class, Typer.INTEGER)
-            .put(boolean.class, Typer.BOOLEAN).put(boolean[].class, Typer.BOOLEANS).put(Boolean.class, Typer.BOOLEAN)
-            .put(double.class, Typer.DOUBLE).put(double[].class, Typer.DOUBLES).put(Double.class, Typer.DOUBLE)
-            .put(float.class, Typer.FLOAT).put(float[].class, Typer.FLOATS).put(Float.class, Typer.FLOAT)
-            .put(char.class, Typer.CHAR).put(char[].class, Typer.CHARS).put(Character.class, Typer.CHAR)
-            .put(long.class, Typer.LONG).put(long[].class, Typer.LONGS).put(Long.class, Typer.LONG)
-            .put(short.class, Typer.SHORT).put(short[].class, Typer.SHORTS).put(Short.class, Typer.SHORT)
-            .put(byte.class, Typer.BYTE).put(byte[].class, Typer.BYTES).put(Byte.class, Typer.BYTE)
+            .put(Integer.TYPE, Typer.INTEGER).put(int[].class, Typer.INTS).put(Integer.class, Typer.INTEGER)
+            .put(Boolean.TYPE, Typer.BOOLEAN).put(boolean[].class, Typer.BOOLEANS).put(Boolean.class, Typer.BOOLEAN)
+            .put(Double.TYPE, Typer.DOUBLE).put(double[].class, Typer.DOUBLES).put(Double.class, Typer.DOUBLE)
+            .put(Float.TYPE, Typer.FLOAT).put(float[].class, Typer.FLOATS).put(Float.class, Typer.FLOAT)
+            .put(Character.TYPE, Typer.CHAR).put(char[].class, Typer.CHARS).put(Character.class, Typer.CHAR)
+            .put(Long.TYPE, Typer.LONG).put(long[].class, Typer.LONGS).put(Long.class, Typer.LONG)
+            .put(Short.TYPE, Typer.SHORT).put(short[].class, Typer.SHORTS).put(Short.class, Typer.SHORT)
+            .put(Byte.TYPE, Typer.BYTE).put(byte[].class, Typer.BYTES).put(Byte.class, Typer.BYTE)
             .put(UUID.class, Typer.UUID).put(String.class, Typer.STRING)
             .build();
 

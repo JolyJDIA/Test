@@ -1,7 +1,5 @@
 package jolyjdia.test.util.serial;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -9,7 +7,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public final class Typer {
-
     public static final Handler<Integer> INTEGER = new Handler<>() {
         @Override
         public byte[] write(Integer i) {
@@ -22,14 +19,14 @@ public final class Typer {
         }
 
         @Override
-        public @NotNull Integer read(@NotNull ByteArrayInputStream stream) throws IOException {
+        public Integer read(ByteArrayInputStream stream) throws IOException {
             return getInt(stream.readNBytes(4));
         }
     };
     //Ждем ВалХалу, а щас терпим
     public static final Handler<int[]> INTS = new Handler<>() {
         @Override
-        public byte[] write(@NotNull int[] array) {
+        public byte[] write(int[] array) {
             int utflen = array.length;
             if (utflen > 0 && utflen <= Short.MAX_VALUE) {
                 //2 = short
@@ -46,7 +43,7 @@ public final class Typer {
         }
 
         @Override
-        public @NotNull int[] read(@NotNull ByteArrayInputStream stream) throws IOException {
+        public int[] read(ByteArrayInputStream stream) throws IOException {
             short length = getShort(stream.readNBytes(2));
             int[] ie = new int[length];
             for(int i = 0; i < length; ++i) {
@@ -72,14 +69,14 @@ public final class Typer {
         }
 
         @Override
-        public @NotNull Long read(@NotNull ByteArrayInputStream stream) throws IOException {
+        public Long read(ByteArrayInputStream stream) throws IOException {
             return getLong(stream.readNBytes(8));
         }
     };
 
     public static final Handler<long[]> LONGS = new Handler<>() {
         @Override
-        public byte[] write(@NotNull long[] array) {
+        public byte[] write(long[] array) {
             int utflen = array.length;
             if (utflen > 0 && utflen <= Short.MAX_VALUE) {
                 ByteBuffer byteBuffer = ByteBuffer
@@ -95,7 +92,7 @@ public final class Typer {
         }
 
         @Override
-        public @NotNull long[] read(@NotNull ByteArrayInputStream stream) throws IOException {
+        public long[] read(ByteArrayInputStream stream) throws IOException {
             short length = getShort(stream.readNBytes(2));
             long[] ie = new long[length];
             for(int i = 0; i < length; ++i) {
@@ -115,14 +112,14 @@ public final class Typer {
         }
 
         @Override
-        public @NotNull Short read(@NotNull ByteArrayInputStream stream) throws IOException {
+        public Short read(ByteArrayInputStream stream) throws IOException {
             return getShort(stream.readNBytes(2));
         }
     };
 
     public static final Handler<short[]> SHORTS = new Handler<>() {
         @Override
-        public byte[] write(@NotNull short[] array) {
+        public byte[] write(short[] array) {
             int utflen = array.length;
             if (utflen > 0 && utflen <= Short.MAX_VALUE) {
                 ByteBuffer byteBuffer = ByteBuffer
@@ -138,7 +135,7 @@ public final class Typer {
         }
 
         @Override
-        public @NotNull short[] read(@NotNull ByteArrayInputStream stream) throws IOException {
+        public short[] read(ByteArrayInputStream stream) throws IOException {
             short length = getShort(stream.readNBytes(2));
             short[] ie = new short[length];
             for(int i = 0; i < length; ++i) {
@@ -158,14 +155,14 @@ public final class Typer {
         }
 
         @Override
-        public @NotNull Character read(@NotNull ByteArrayInputStream stream) throws IOException {
+        public Character read(ByteArrayInputStream stream) throws IOException {
             return getChar(stream.readNBytes(2));
         }
     };
 
     public static final Handler<char[]> CHARS = new Handler<>() {
         @Override
-        public byte[] write(@NotNull char[] array) {
+        public byte[] write(char[] array) {
             int utflen = array.length;
             if (utflen > 0 && utflen <= Short.MAX_VALUE) {
                 ByteBuffer byteBuffer = ByteBuffer
@@ -181,7 +178,7 @@ public final class Typer {
         }
 
         @Override
-        public @NotNull char[] read(@NotNull ByteArrayInputStream stream) throws IOException {
+        public char[] read(ByteArrayInputStream stream) throws IOException {
             short length = getShort(stream.readNBytes(2));
             char[] ie = new char[length];
             for(int i = 0; i < length; ++i) {
@@ -198,14 +195,14 @@ public final class Typer {
         }
 
         @Override
-        public @NotNull Double read(@NotNull ByteArrayInputStream stream) throws IOException {
+        public Double read(ByteArrayInputStream stream) throws IOException {
             return getDouble(stream.readNBytes(8));
         }
     };
 
     public static final Handler<double[]> DOUBLES = new Handler<>() {
         @Override
-        public byte[] write(@NotNull double[] array) {
+        public byte[] write(double[] array) {
             int utflen = array.length;
             if (utflen > 0 && utflen <= Short.MAX_VALUE) {
                 ByteBuffer byteBuffer = ByteBuffer
@@ -221,7 +218,7 @@ public final class Typer {
         }
 
         @Override
-        public @NotNull double[] read(@NotNull ByteArrayInputStream stream) throws IOException {
+        public double[] read(ByteArrayInputStream stream) throws IOException {
             short length = getShort(stream.readNBytes(2));
             double[] ie = new double[length];
             for(int i = 0; i < length; ++i) {
@@ -238,13 +235,13 @@ public final class Typer {
         }
 
         @Override
-        public @NotNull Float read(@NotNull ByteArrayInputStream stream) throws IOException {
+        public Float read(ByteArrayInputStream stream) throws IOException {
             return getFloat(stream.readNBytes(4));
         }
     };
     public static final Handler<float[]> FLOATS = new Handler<>() {
         @Override
-        public byte[] write(@NotNull float[] array) {
+        public byte[] write(float[] array) {
             int utflen = array.length;
             if (utflen > 0 && utflen <= Short.MAX_VALUE) {
                 ByteBuffer byteBuffer = ByteBuffer
@@ -260,7 +257,7 @@ public final class Typer {
         }
 
         @Override
-        public @NotNull float[] read(@NotNull ByteArrayInputStream stream) throws IOException {
+        public float[] read(ByteArrayInputStream stream) throws IOException {
             short length = getShort(stream.readNBytes(2));
             float[] ie = new float[length];
             for(int i = 0; i < length; ++i) {
@@ -277,13 +274,13 @@ public final class Typer {
         }
 
         @Override
-        public @NotNull Boolean read(@NotNull ByteArrayInputStream stream) throws IOException {
+        public Boolean read(ByteArrayInputStream stream) throws IOException {
             return stream.readNBytes(1)[0] != 0;
         }
     };
     public static final Handler<boolean[]> BOOLEANS = new Handler<>() {
         @Override
-        public byte[] write(@NotNull boolean[] array) {
+        public byte[] write(boolean[] array) {
             int utflen = array.length;
             if (utflen > 0 && utflen <= Short.MAX_VALUE) {
                 ByteBuffer byteBuffer = ByteBuffer
@@ -299,7 +296,7 @@ public final class Typer {
         }
 
         @Override
-        public @NotNull boolean[] read(@NotNull ByteArrayInputStream stream) throws IOException {
+        public boolean[] read(ByteArrayInputStream stream) throws IOException {
             short length = getShort(stream.readNBytes(2));
             boolean[] ie = new boolean[length];
             for(int i = 0; i < length; ++i) {
@@ -316,13 +313,13 @@ public final class Typer {
         }
 
         @Override
-        public @NotNull Byte read(@NotNull ByteArrayInputStream stream) throws IOException {
+        public Byte read(ByteArrayInputStream stream) throws IOException {
             return stream.readNBytes(1)[0];
         }
     };
     public static final Handler<byte[]> BYTES = new Handler<>() {
         @Override
-        public byte[] write(@NotNull byte[] array) {
+        public byte[] write(byte[] array) {
             int utflen = array.length;
             if (utflen > 0 && utflen <= Short.MAX_VALUE) {
                 return ByteBuffer.wrap(new byte[(utflen) + 2])
@@ -335,13 +332,13 @@ public final class Typer {
         }
 
         @Override
-        public @NotNull byte[] read(@NotNull ByteArrayInputStream stream) throws IOException {
+        public byte[] read(ByteArrayInputStream stream) throws IOException {
             return stream.readNBytes(getShort(stream.readNBytes(2)));
         }
     };
     public static final Handler<java.util.UUID> UUID = new Handler<>() {
         @Override
-        public byte[] write(@NotNull UUID o) {
+        public byte[] write(UUID o) {
             return ByteBuffer.wrap(new byte[16])
                     .putLong(o.getMostSignificantBits())
                     .putLong(o.getLeastSignificantBits())
@@ -349,14 +346,14 @@ public final class Typer {
         }
 
         @Override
-        public @NotNull UUID read(@NotNull ByteArrayInputStream stream) throws IOException {
+        public UUID read(ByteArrayInputStream stream) throws IOException {
             return new UUID(getLong(stream.readNBytes(8)), getLong(stream.readNBytes(8)));
         }
     };
 
     public static final Handler<String> STRING = new Handler<>() {
         @Override
-        public byte[] write(@NotNull String s) {
+        public byte[] write(String s) {
             byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
             int utflen = bytes.length;
             if (utflen > 0 && utflen <= Short.MAX_VALUE) {
@@ -370,7 +367,7 @@ public final class Typer {
         }
 
         @Override
-        public @NotNull String read(@NotNull ByteArrayInputStream stream) throws IOException {
+        public String read(ByteArrayInputStream stream) throws IOException {
             short length = getShort(stream.readNBytes(2));
             return new String(stream.readNBytes(length));
         }
