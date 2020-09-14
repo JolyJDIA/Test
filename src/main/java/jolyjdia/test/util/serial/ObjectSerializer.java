@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public final class ObjectSerializer {
-    private static final Map<Type, Handler<?>> OBJECT_PRODUCER = ImmutableMap.<Type, Handler<?>>builder()
+    private static final Map<Type, Handler<?>> TYPE_PRODUCERS = ImmutableMap.<Type, Handler<?>>builder()
             .put(int.class, Typer.INTEGER).put(int[].class, Typer.INTS).put(Integer.class, Typer.INTEGER)
             .put(boolean.class, Typer.BOOLEAN).put(boolean[].class, Typer.BOOLEANS).put(Boolean.class, Typer.BOOLEAN)
             .put(double.class, Typer.DOUBLE).put(double[].class, Typer.DOUBLES).put(Double.class, Typer.DOUBLE)
@@ -23,8 +23,7 @@ public final class ObjectSerializer {
             .put(UUID.class, Typer.UUID).put(String.class, Typer.STRING)
             .build();
 
-    private ObjectSerializer() {
-    }
+    private ObjectSerializer() {}
 
     public static void serialize(Object o, ByteArrayOutputStream output) {
         Class<?> type = o.getClass();
@@ -35,7 +34,7 @@ public final class ObjectSerializer {
             for (Object obj : array) {
                 serialize(obj, output);
             }
-        } else if ((typeField = (Handler<Object>) OBJECT_PRODUCER.get(type)) == null) {
+        } else if ((typeField = (Handler<Object>) TYPE_PRODUCERS.get(type)) == null) {
             while (type.getSuperclass() != null) {
                 for (Field field : type.getDeclaredFields()) {
                     //14 = (Modifier.PRIVATE | Modifier.PROTECTED | Modifier.STATIC)
@@ -66,7 +65,7 @@ public final class ObjectSerializer {
                     array[i] = deserialize(input, ccl);
                 }
                 return (T) array;
-            } else if ((tProducer = (Handler<T>) OBJECT_PRODUCER.get(aClass)) == null) {
+            } else if ((tProducer = (Handler<T>) TYPE_PRODUCERS.get(aClass)) == null) {
                 T instance = aClass.getConstructor().newInstance();
                 Class<?> currentClass = aClass;
                 while (currentClass.getSuperclass() != null) {

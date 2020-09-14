@@ -153,7 +153,7 @@ public final class Typer {
         public byte[] write(Character c) {
             return new byte[]{
                     (byte) (c >>> 8),
-                    (byte) ((char)c),
+                    (byte) ((char)c)
             };
         }
 
@@ -378,26 +378,26 @@ public final class Typer {
 
     private Typer() {}
 
-    public static char getChar(byte[] b) {
+    static char getChar(byte[] b) {
         return (char) ((b[0] << 8) + (b[1] & 0xFF));
     }
 
-    public static short getShort(byte[] b) {
+    static short getShort(byte[] b) {
         return (short) ((b[0] << 8) + (b[1] & 0xFF));
     }
 
-    public static int getInt(byte[] b) {
+    static int getInt(byte[] b) {
         return ((b[0]) << 24) +
                 ((b[1] & 0xFF) << 16) +
                 ((b[2] & 0xFF) <<  8) +
                 (b[3] & 0xFF);
     }
 
-    public static float getFloat(byte[] b) {
+    static float getFloat(byte[] b) {
         return Float.intBitsToFloat(getInt(b));
     }
 
-    public static long getLong(byte[] b) {
+    static long getLong(byte[] b) {
         return (((long) b[0])   << 56) +
                 ((b[1] & 0xFFL) << 48) +
                 ((b[2] & 0xFFL) << 40) +
@@ -408,7 +408,7 @@ public final class Typer {
                 ((b[7] & 0xFFL)      );
     }
 
-    public static double getDouble(byte[] b) {
+    static double getDouble(byte[] b) {
         return Double.longBitsToDouble(getLong(b));
     }
 }
