@@ -1,6 +1,7 @@
 package jolyjdia.test;
 
 import jolyjdia.test.util.serial.ObjectSerializer;
+import jolyjdia.test.util.serial.Typer;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -17,60 +18,34 @@ public final class Example {
 
     private Example() {}
 
-    public static void main(String[] args) {
-        /*long s = System.currentTimeMillis();
-        try (ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-             ObjectOutputStream objectOutputStream = new ObjectOutputStream(bytes)) {
-            objectOutputStream.writeObject(new Obj0());
+    public static void main(String[] args) throws IOException {
+        execute(
+                new Packet("money"),
+                new Packet("vk"),
+                new Packet("chat"),
+                new Packet("exp"),
+                new Packet("message")
+        );
 
-            try (ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes.toByteArray());
-                 ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
-                Obj0 obj0 = (Obj0) objectInputStream.readObject();
-                long e = System.currentTimeMillis() - s;
-                System.out.println(e);
-            }
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }*/
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            ObjectSerializer.serialize(new Obj(), outputStream);
-            System.out.println(Arrays.toString(outputStream.toByteArray()));
-            try (ByteArrayInputStream input = new ByteArrayInputStream(outputStream.toByteArray())) {
-                Test array = ObjectSerializer.deserialize(input, Obj0.class);
-                System.out.println(array);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }//[0, 3, 0, 3, 1, 1, 1, 0, 3, 0, 0, 0, 0, 3, 1, 1, 1]
-    public static class Obj implements Test {
-        @SuppressWarnings("serial")
-        public boolean i = true;
-        public int[] array = new int[0];
-
-        @Override
-        public String toString() {
-            return "Obj0{" +
-                    "i=" + i +
-                    ", array=" + Arrays.toString(array) +
-                    '}';
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+        if(Typer.BOOLEAN.read(inputStream)) {
+            Packet[] array = ObjectSerializer.deserialize(inputStream, Packet[].class);
+            System.out.println(Arrays.toString(array));
+        } else {
+            Packet packet = ObjectSerializer.deserialize(inputStream, Packet.class);
+            System.out.println(packet);
         }
     }
-    public interface Test {
+    static ByteArrayOutputStream outputStream;
 
-    }
-    public static class Obj0 implements Test {
-        public boolean i = true;
-        public int[] array = new int[0];
-
-
-        @Override
-        public String toString() {
-            return "Obj0{" +
-                    "i=" + i +
-                    ", array=" + Arrays.toString(array) +
-                    '}';
+    public static void execute(Object... packets) {
+        if(packets.length == 0) {
+            return;//void
         }
+        outputStream = new ByteArrayOutputStream();
+        boolean batch = packets.length != 1;
+        outputStream.writeBytes(Typer.BOOLEAN.write(batch));
+        ObjectSerializer.serialize(batch ? packets : packets[0], outputStream);
     }
 }
 

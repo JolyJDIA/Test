@@ -1,7 +1,7 @@
 package jolyjdia.test.util.squall0;
 
 import java.sql.*;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -22,7 +22,7 @@ public class AbstractSquall<S_OUT> implements Squall<S_OUT> {
     Connection connection;
 
     public AbstractSquall(Connection connection, final String sql, int key) throws SQLException {
-        this.listSteps = new LinkedList<>();
+        this.listSteps = new ArrayList<>();
         this.preparedStatement = (this.connection = connection).prepareStatement(sql, key);
         this.sourceSquall = this;
     }
