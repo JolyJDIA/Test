@@ -20,7 +20,8 @@ public final class ObjectSerializer {
             .put(Long.TYPE, Typer.LONG).put(long[].class, Typer.LONGS).put(Long.class, Typer.LONG)
             .put(Short.TYPE, Typer.SHORT).put(short[].class, Typer.SHORTS).put(Short.class, Typer.SHORT)
             .put(Byte.TYPE, Typer.BYTE).put(byte[].class, Typer.BYTES).put(Byte.class, Typer.BYTE)
-            .put(UUID.class, Typer.UUID).put(String.class, Typer.STRING)
+            .put(UUID.class, Typer.UUID)
+            .put(String.class, Typer.STRING)
             .build();
 
     private ObjectSerializer() {}

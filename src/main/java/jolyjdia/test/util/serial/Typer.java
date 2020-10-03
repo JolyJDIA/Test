@@ -38,7 +38,7 @@ public final class Typer {
                 }
                 return byteBuffer.array();
             } else {
-                return new byte[0];
+                return new byte[2];
             }
         }
 
@@ -87,7 +87,7 @@ public final class Typer {
                 }
                 return byteBuffer.array();
             } else {
-                return new byte[0];
+                return new byte[2];
             }
         }
 
@@ -130,7 +130,7 @@ public final class Typer {
                 }
                 return byteBuffer.array();
             } else {
-                return new byte[0];
+                return new byte[2];
             }
         }
 
@@ -173,7 +173,7 @@ public final class Typer {
                 }
                 return byteBuffer.array();
             } else {
-                return new byte[0];
+                return new byte[2];
             }
         }
 
@@ -213,7 +213,7 @@ public final class Typer {
                 }
                 return byteBuffer.array();
             } else {
-                return new byte[0];
+                return new byte[2];
             }
         }
 
@@ -252,7 +252,7 @@ public final class Typer {
                 }
                 return byteBuffer.array();
             } else {
-                return new byte[0];
+                return new byte[2];
             }
         }
 
@@ -291,7 +291,7 @@ public final class Typer {
                 }
                 return byteBuffer.array();
             } else {
-                return new byte[0];
+                return new byte[2];
             }
         }
 
@@ -327,7 +327,7 @@ public final class Typer {
                         .put(array)
                         .array();
             } else {
-                return new byte[0];
+                return new byte[2];
             }
         }
 
