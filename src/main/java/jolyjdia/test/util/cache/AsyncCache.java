@@ -39,7 +39,7 @@ public class AsyncCache<K, V> {
                 }
                 for (Map.Entry<K, Node<V>> entry : map.entrySet()) {
                     Node<V> vNode = entry.getValue();
-                    if (vNode.refresh == REMOVAL) {
+                    if (vNode.refresh == REMOVAL) {//Процесс удаления уже идет
                         return;
                     }
                     long afterAccess = builder.getExpireAfterAccess(),
@@ -48,9 +48,10 @@ public class AsyncCache<K, V> {
                     if ((afterAccess != NESTED && now - vNode.refresh >= afterAccess) ||
                         (afterWrite  != NESTED && now - vNode.start   >= afterWrite))
                     {
-                        vNode.refresh = REMOVAL;
+                        vNode.refresh = REMOVAL;//задаю статус удаления
                         safeRemoval(entry.getKey(), vNode).thenAccept(remove -> {
                             if (remove) {
+                                //Проверяю, вдруг я уже где-то обновил значение
                                 if (vNode.refresh == REMOVAL) {
                                     map.remove(entry.getKey());
                                 }
