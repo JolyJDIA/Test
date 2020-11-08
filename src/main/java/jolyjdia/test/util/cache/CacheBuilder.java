@@ -47,8 +47,8 @@ public class CacheBuilder<K, V> {
         this.loadFactor = loadFactor;
         return this;
     }
-    public CacheBuilder<K, V> removalListener(RemovalListener<K, V> removalListener) {
-        this.removal = removalListener;
+    public CacheBuilder<K, V> removal(RemovalListener<K, V> removal) {
+        this.removal = removal;
         return this;
     }
     public CacheBuilder<K, V> softValues() {

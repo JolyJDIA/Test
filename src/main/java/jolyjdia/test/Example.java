@@ -20,7 +20,7 @@ public final class Example {
 
         AsyncCache<String, String> cache = new CacheBuilder<String, String>()
                 .expireAfterAccess(10, TimeUnit.SECONDS)
-                .removalListener(new CacheBuilder.RemovalListener<String, String>() {
+                .removal(new CacheBuilder.RemovalListener<String, String>() {
                     @Override
                     public CompletableFuture<Boolean> onRemoval(String key, CompletableFuture<String> cf) {
                         return cf.thenApply(e -> {
