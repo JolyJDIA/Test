@@ -35,8 +35,8 @@ public class CacheBuilder<K, V> {
         this.maxSize = capacity;
         return this;
     }
-    public CacheBuilder<K, V> concurrencyLevel(int concurrencyLevel) {
-        this.concurrencyLevel = concurrencyLevel;
+    public CacheBuilder<K, V> concurrency(int concurrency) {
+        this.concurrencyLevel = concurrency;
         return this;
     }
     public CacheBuilder<K, V> tick(int tick) {
@@ -59,8 +59,8 @@ public class CacheBuilder<K, V> {
         this.strength = Strength.WEAK;
         return this;
     }
-    public AsyncCache<K, V> build(AsyncCacheLoader<K, V> asyncCacheLoader) {
-        return new AsyncCache<>(asyncCacheLoader, this);
+    public ConcurrentCache<K, V> build(AsyncCacheLoader<K, V> asyncCacheLoader) {
+        return new ConcurrentCache<>(asyncCacheLoader, this);
     }
 
     public Executor getExecutor() {

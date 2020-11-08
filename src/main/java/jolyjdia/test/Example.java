@@ -1,7 +1,7 @@
 package jolyjdia.test;
 
-import jolyjdia.test.util.cache.AsyncCache;
 import jolyjdia.test.util.cache.CacheBuilder;
+import jolyjdia.test.util.cache.ConcurrentCache;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -18,7 +18,7 @@ public final class Example {
     private static boolean online = true;
     public static void main(String[] args) throws InterruptedException, IllegalAccessException, NoSuchFieldException {
 
-        AsyncCache<String, String> cache = new CacheBuilder<String, String>()
+        ConcurrentCache<String, String> cache = new CacheBuilder<String, String>()
                 .expireAfterAccess(10, TimeUnit.SECONDS)
                 .removal(new CacheBuilder.RemovalListener<String, String>() {
                     @Override

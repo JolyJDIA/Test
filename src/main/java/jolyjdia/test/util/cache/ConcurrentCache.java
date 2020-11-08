@@ -1,5 +1,6 @@
 package jolyjdia.test.util.cache;
 
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-public class AsyncCache<K, V> {
+public class ConcurrentCache<K, V> {
     @SuppressWarnings("rawtypes")
     static final CompletableFuture[] A = new CompletableFuture[0];
     static final int NESTED  = -1;
@@ -20,7 +21,7 @@ public class AsyncCache<K, V> {
     private final CacheBuilder<K, V> builder;
     private final CacheBuilder.AsyncCacheLoader<K, V> cacheLoader;
 
-    public AsyncCache(CacheBuilder.AsyncCacheLoader<K, V> cacheLoader, CacheBuilder<K, V> builder) {
+    public ConcurrentCache(CacheBuilder.AsyncCacheLoader<K, V> cacheLoader, CacheBuilder<K, V> builder) {
         this.cacheLoader = cacheLoader;
         float loadFactor = builder.getLoadFactor();
         int buckets = (int)(builder.getMaxSize() / loadFactor) + 1;
@@ -114,7 +115,7 @@ public class AsyncCache<K, V> {
         public Node(CompletableFuture<V> cf) {
             this.cf = cf;
         }
-
+        @NonNls
         @Override
         public String toString() {
             return "Node{" +
@@ -137,7 +138,7 @@ public class AsyncCache<K, V> {
             return builder.getRemoval().onRemoval(key, cf);
         }, builder.getExecutor());
     }
-
+    @NonNls
     @Override
     public String toString() {
         return "AsyncCache{" + "map=" + map + '}';
