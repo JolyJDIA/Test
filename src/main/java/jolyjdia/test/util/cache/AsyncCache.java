@@ -133,7 +133,7 @@ public class AsyncCache<K, V> {
         CompletableFuture<V> cf = node.cf;
 
         return cf.thenComposeAsync(f -> {
-            return builder.getRemovalListener().onRemoval(key, cf);
+            return builder.getRemoval().onRemoval(key, cf);
         }, builder.getExecutor());
     }
 

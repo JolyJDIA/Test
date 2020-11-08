@@ -14,7 +14,7 @@ public class CacheBuilder<K, V> {
     private float loadFactor = 0.75F;
     private int tick = 100;
     private Strength strength;
-    private RemovalListener<K, V> removalListener;
+    private RemovalListener<K, V> removal;
 
     public CacheBuilder<K, V> executor(Executor executor) {
         requireNonNull(executor);
@@ -48,7 +48,7 @@ public class CacheBuilder<K, V> {
         return this;
     }
     public CacheBuilder<K, V> removalListener(RemovalListener<K, V> removalListener) {
-        this.removalListener = removalListener;
+        this.removal = removalListener;
         return this;
     }
     public CacheBuilder<K, V> softValues() {
@@ -94,8 +94,8 @@ public class CacheBuilder<K, V> {
         return loadFactor;
     }
 
-    public RemovalListener<K, V> getRemovalListener() {
-        return removalListener;
+    public RemovalListener<K, V> getRemoval() {
+        return removal;
     }
 
     enum Strength {

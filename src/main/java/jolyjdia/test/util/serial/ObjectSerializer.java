@@ -8,41 +8,48 @@ import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public final class ObjectSerializer {
-    private static final Map<Type, Handler<?>> TYPE_PRODUCERS = new HashMap<>();
+import static java.util.Map.entry;
 
-    static {
-        TYPE_PRODUCERS.put(Integer.TYPE, Typer.INTEGER);
-        TYPE_PRODUCERS.put(int[].class, Typer.INTS);
-        TYPE_PRODUCERS.put(Integer.class, Typer.INTEGER);
-        TYPE_PRODUCERS.put(Boolean.TYPE, Typer.BOOLEAN);
-        TYPE_PRODUCERS.put(boolean[].class, Typer.BOOLEANS);
-        TYPE_PRODUCERS.put(Boolean.class, Typer.BOOLEAN);
-        TYPE_PRODUCERS.put(Double.TYPE, Typer.DOUBLE);
-        TYPE_PRODUCERS.put(double[].class, Typer.DOUBLES);
-        TYPE_PRODUCERS.put(Double.class, Typer.DOUBLE);
-        TYPE_PRODUCERS.put(Float.TYPE, Typer.FLOAT);
-        TYPE_PRODUCERS.put(float[].class, Typer.FLOATS);
-        TYPE_PRODUCERS.put(Float.class, Typer.FLOAT);
-        TYPE_PRODUCERS.put(Character.TYPE, Typer.CHAR);
-        TYPE_PRODUCERS.put(char[].class, Typer.CHARS);
-        TYPE_PRODUCERS.put(Character.class, Typer.CHAR);
-        TYPE_PRODUCERS.put(Long.TYPE, Typer.LONG);
-        TYPE_PRODUCERS.put(long[].class, Typer.LONGS);
-        TYPE_PRODUCERS.put(Long.class, Typer.LONG);
-        TYPE_PRODUCERS.put(Short.TYPE, Typer.SHORT);
-        TYPE_PRODUCERS.put(short[].class, Typer.SHORTS);
-        TYPE_PRODUCERS.put(Short.class, Typer.SHORT);
-        TYPE_PRODUCERS.put(Byte.TYPE, Typer.BYTE);
-        TYPE_PRODUCERS.put(byte[].class, Typer.BYTES);
-        TYPE_PRODUCERS.put(Byte.class, Typer.BYTE);
-        TYPE_PRODUCERS.put(UUID.class, Typer.UUID);
-        TYPE_PRODUCERS.put(String.class, Typer.STRING);
-    }
+public final class ObjectSerializer {
+    private static final Map<Type, Handler<?>> TYPE_PRODUCERS = Map.ofEntries(
+            entry(Integer.TYPE, Typer.INTEGER),
+            entry(int[].class, Typer.INTS),
+            entry(Integer.class, Typer.INTEGER),
+
+            entry(Boolean.TYPE, Typer.BOOLEAN),
+            entry(boolean[].class, Typer.BOOLEANS),
+            entry(Boolean.class, Typer.BOOLEAN),
+
+            entry(Double.TYPE, Typer.DOUBLE),
+            entry(double[].class, Typer.DOUBLES),
+            entry(Double.class, Typer.DOUBLE),
+
+            entry(Float.TYPE, Typer.FLOAT),
+            entry(float[].class, Typer.FLOATS),
+            entry(Float.class, Typer.FLOAT),
+
+            entry(Character.TYPE, Typer.CHAR),
+            entry(char[].class, Typer.CHARS),
+            entry(Character.class, Typer.CHAR),
+
+            entry(Long.TYPE, Typer.LONG),
+            entry(long[].class, Typer.LONGS),
+            entry(Long.class, Typer.LONG),
+
+            entry(Short.TYPE, Typer.SHORT),
+            entry(short[].class, Typer.SHORTS),
+            entry(Short.class, Typer.SHORT),
+
+            entry(Byte.TYPE, Typer.BYTE),
+            entry(byte[].class, Typer.BYTES),
+            entry(Byte.class, Typer.BYTE),
+
+            entry(UUID.class, Typer.UUID),
+            entry(String.class, Typer.STRING)
+    );
 
     private ObjectSerializer() {}
     private static final String UID = "packetId";
