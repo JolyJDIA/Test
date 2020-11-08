@@ -22,6 +22,11 @@ public final class Typer {
         public Integer read(ByteArrayInputStream stream) throws IOException {
             return getInt(stream.readNBytes(4));
         }
+
+        @Override
+        public String toString() {
+            return "INT";
+        }
     };
     //Ждем ВалХалу, а щас терпим
     public static final Handler<int[]> INTS = new Handler<>() {
@@ -370,6 +375,10 @@ public final class Typer {
         public String read(ByteArrayInputStream stream) throws IOException {
             short length = getShort(stream.readNBytes(2));
             return new String(stream.readNBytes(length));
+        }
+        @Override
+        public String toString() {
+            return "String";
         }
     };
 

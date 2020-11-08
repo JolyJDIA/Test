@@ -1,51 +1,66 @@
 package jolyjdia.test;
 
-import jolyjdia.test.util.serial.ObjectSerializer;
-import jolyjdia.test.util.serial.Typer;
+import jolyjdia.test.util.cache.AsyncCache;
+import jolyjdia.test.util.cache.CacheBuilder;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public final class Example {
 
-    private static final MariaDBConnectionFactory DB = new MariaDBConnectionFactory(
-            "root",
-            "",
-            "test",
-            "localhost:3306");
-
-    private Example() {}
-
-    public static void main(String[] args) throws IOException {
-        execute(
-                new Packet("money"),
-                new Packet("vk"),
-                new Packet("chat"),
-                new Packet("exp"),
-                new Packet("message")
-        );
-
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-        if(Typer.BOOLEAN.read(inputStream)) {
-            Packet[] array = ObjectSerializer.deserialize(inputStream, Packet[].class);
-            System.out.println(Arrays.toString(array));
-        } else {
-            Packet packet = ObjectSerializer.deserialize(inputStream, Packet.class);
-            System.out.println(packet);
-        }
+    private Example() {
     }
-    static ByteArrayOutputStream outputStream;
 
-    public static void execute(Object... packets) {
-        if(packets.length == 0) {
-            return;//void
+    private static final CompletableFuture<String> cf = new CompletableFuture<>();
+    private static final float LOAD_FACTOR = 1.15F;
+    private static boolean online = true;
+    public static void main(String[] args) throws InterruptedException, IllegalAccessException, NoSuchFieldException {
+
+        AsyncCache<String, String> cache = new CacheBuilder<String, String>()
+                .expireAfterAccess(10, TimeUnit.SECONDS)
+                .removalListener(new CacheBuilder.RemovalListener<String, String>() {
+                    @Override
+                    public CompletableFuture<Boolean> onRemoval(String key, CompletableFuture<String> cf) {
+                        return cf.thenApply(e -> {
+                            if(online) {
+                                return false;
+                            }
+                            System.out.println("ДОЛЖЕН БЫТЬ ПУСТЫМ "+Thread.currentThread().getName());
+                            return true;
+                        });
+                    }
+                })
+                .executor(Executors.newCachedThreadPool())
+                .build(new CacheBuilder.AsyncCacheLoader<String, String>() {
+                    @Override
+                    public CompletableFuture<String> asyncLoad(String key, Executor executor) {
+                       // CompletableFuture<String> cf = new CompletableFuture<>();
+                       // cf.complete((key+" 122"));
+                        return cf;
+                    }
+                });
+        cache.get("21");
+        //cache.get("28");
+        //cache.get("241");
+        cache.removeAll().thenAccept(e -> {
+           System.out.println("VSe");
+        });
+        int i = 0;
+        for (;;) {
+            Thread.sleep(100);
+            if( i == 50) {
+                System.out.println("complete");
+                cf.complete( " 122");
+            } else if( i == 70) {
+                System.out.println("offline");
+                online = false;
+            }
+            if (i % 8 == 0) {
+                System.out.println(cache);
+            }
+            ++i;
         }
-        outputStream = new ByteArrayOutputStream();
-        boolean batch = packets.length != 1;
-        outputStream.writeBytes(Typer.BOOLEAN.write(batch));
-        ObjectSerializer.serialize(batch ? packets : packets[0], outputStream);
     }
 }
-

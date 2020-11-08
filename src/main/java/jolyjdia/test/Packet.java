@@ -1,15 +1,14 @@
 package jolyjdia.test;
 
-public class Packet {
-    public String s;
+public abstract class Packet {
+    public final int packetId = 6;
 
-    public Packet(String s) {
-        this.s = s;
-    }
     public Packet() {}
+
+    public abstract void handle();
 
     @Override
     public String toString() {
-        return s;
+        return packetId+"";
     }
 }
