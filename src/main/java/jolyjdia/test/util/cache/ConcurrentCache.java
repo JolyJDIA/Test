@@ -35,9 +35,6 @@ public class ConcurrentCache<K, V> {
                     e.printStackTrace();
                     break;
                 }
-                if (map.isEmpty()) {
-                    continue;
-                }
                 for (Map.Entry<K, Node<V>> entry : map.entrySet()) {
                     Node<V> vNode = entry.getValue();
                     if (vNode.refresh == REMOVAL) {//Процесс удаления уже идет
@@ -115,14 +112,17 @@ public class ConcurrentCache<K, V> {
         public Node(CompletableFuture<V> cf) {
             this.cf = cf;
         }
-        @NonNls
         @Override
         public String toString() {
-            return "Node{" +
+            @NonNls String s = "Node{" +
                     "CompletableFuture=" + cf +
                     ", start=" + start +
-                    ", refresh=" + refresh +
-                    '}';
+                    ", refresh=" + refresh;
+            if (refresh == REMOVAL) {
+                s += ", status=removal";
+            }
+            s += '}';
+            return s;
         }
     }
 
