@@ -36,7 +36,7 @@ public class ConcurrentCache<K, V> {
                     break;
                 }
                 if (map.isEmpty()) {
-                    return;
+                    continue;
                 }
                 for (Map.Entry<K, Node<V>> entry : map.entrySet()) {
                     Node<V> vNode = entry.getValue();

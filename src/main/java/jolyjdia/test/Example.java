@@ -14,19 +14,14 @@ public final class Example {
     }
 
     private static final CompletableFuture<String> cf = new CompletableFuture<>();
-    private static final float LOAD_FACTOR = 1.15F;
     private static boolean online = true;
     public static void main(String[] args) throws InterruptedException, IllegalAccessException, NoSuchFieldException {
-
         ConcurrentCache<String, String> cache = new CacheBuilder<String, String>()
                 .expireAfterAccess(10, TimeUnit.SECONDS)
                 .removal(new CacheBuilder.RemovalListener<String, String>() {
                     @Override
                     public CompletableFuture<Boolean> onRemoval(String key, CompletableFuture<String> cf) {
                         return cf.thenApply(e -> {
-                            if(online) {
-                                return false;
-                            }
                             System.out.println("ДОЛЖЕН БЫТЬ ПУСТЫМ "+Thread.currentThread().getName());
                             return true;
                         });
@@ -36,23 +31,20 @@ public final class Example {
                 .build(new CacheBuilder.AsyncCacheLoader<String, String>() {
                     @Override
                     public CompletableFuture<String> asyncLoad(String key, Executor executor) {
-                       // CompletableFuture<String> cf = new CompletableFuture<>();
-                       // cf.complete((key+" 122"));
+                        CompletableFuture<String> cf = new CompletableFuture<>();
+                        cf.complete((key+" 122"));
                         return cf;
                     }
                 });
         cache.get("21");
         //cache.get("28");
         //cache.get("241");
-        cache.removeAll().thenAccept(e -> {
-           System.out.println("VSe");
-        });
         int i = 0;
         for (;;) {
             Thread.sleep(100);
             if( i == 50) {
                 System.out.println("complete");
-                cf.complete( " 122");
+               // cf.complete( " 122");
             } else if( i == 70) {
                 System.out.println("offline");
                 online = false;
