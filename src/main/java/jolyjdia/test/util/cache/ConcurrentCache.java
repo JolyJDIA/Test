@@ -121,8 +121,10 @@ public class ConcurrentCache<K, V> {
             } else {
                 node.removal = safeRemoval(key, node).thenApply(erase -> {
                     if (erase) {
-                        map.remove(key);
-                        cf.complete(null);
+                        if (node.removal != null) {
+                            map.remove(key);
+                            cf.complete(null);
+                        }
                     } else {
                         node.removal = null;
                         node.refresh = System.currentTimeMillis();
