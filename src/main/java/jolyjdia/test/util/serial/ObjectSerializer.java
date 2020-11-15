@@ -1,8 +1,5 @@
 package jolyjdia.test.util.serial;
 
-import jolyjdia.test.PacketMoney;
-import jolyjdia.test.PacketVk;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Array;
@@ -10,7 +7,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.UUID;
-
 import static java.util.Map.entry;
 
 public final class ObjectSerializer {
@@ -52,9 +48,7 @@ public final class ObjectSerializer {
     );
 
     private ObjectSerializer() {}
-    private static final String UID = "packetId";
 
-    @SuppressWarnings({"cast", "unchecked"})
     public static void serialize(Object o, ByteArrayOutputStream output) {
         Class<?> type = o.getClass();
         Handler<Object> typeField;
@@ -62,14 +56,13 @@ public final class ObjectSerializer {
             Object[] array = (Object[]) o;
             output.writeBytes(Typer.SHORT.write((short) array.length));
             for (Object obj : array) {
-                System.out.println("asdasd "+obj);
                 serialize(obj, output);
             }
         } else if ((typeField = (Handler<Object>) TYPE_PRODUCERS.get(type)) == null) {
             while (type.getSuperclass() != null) {
                 for (Field field : type.getDeclaredFields()) {
-                    //142 int mask = (Modifier.PRIVATE | Modifier.PROTECTED | Modifier.STATIC | Modifier.TRANSIENT);
-                    if ((!field.getName().equals(UID)) && (field.getModifiers() & 142) != 0) {
+                    //14 = (Modifier.PRIVATE | Modifier.PROTECTED | Modifier.STATIC)
+                    if ((field.getModifiers() & 14) != 0) {
                         continue;
                     }
                     try {
@@ -85,29 +78,24 @@ public final class ObjectSerializer {
             output.writeBytes(typeField.write(o));
         }
     }
-    @SuppressWarnings({"cast", "unchecked"})
+
     public static <T> T deserialize(ByteArrayInputStream input, Class<T> aClass) {
         try {
             Handler<T> tProducer;
             Class<?> ccl;
             if(aClass.isArray() && !(ccl = aClass.getComponentType()).isPrimitive()) {
                 Object[] array = (Object[])Array.newInstance(ccl, Typer.SHORT.read(input));
-                //for (int i = 0, len = array.length; i < len; ++i) {
-                 //   array[i] = deserialize(input, ccl);
-               // }
-                array[0] = deserialize(input, PacketMoney.class);
-                array[1] = deserialize(input, PacketVk.class);
+                for (int i = 0, len = array.length; i < len; ++i) {
+                    array[i] = deserialize(input, ccl);
+                }
                 return (T) array;
             } else if ((tProducer = (Handler<T>) TYPE_PRODUCERS.get(aClass)) == null) {
                 T instance = aClass.getConstructor().newInstance();
                 Class<?> currentClass = aClass;
                 while (currentClass.getSuperclass() != null) {
                     for (Field field : currentClass.getDeclaredFields()) {
-                        if (field.getName().equals(UID)) {
-                            input.skipNBytes(4);
-                            continue;
-                            //158 int mask = (Modifier.PRIVATE | Modifier.PROTECTED | Modifier.STATIC | Modifier.FINAL | Modifier.TRANSIENT);
-                        } else if ((field.getModifiers() & 158) != 0) {
+                        //30 = (Modifier.PRIVATE | Modifier.PROTECTED | Modifier.STATIC | Modifier.FINAL)
+                        if ((field.getModifiers() & 30) != 0) {
                             continue;
                         }
                         field.setAccessible(true);

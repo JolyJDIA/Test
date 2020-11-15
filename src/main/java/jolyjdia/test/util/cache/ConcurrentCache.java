@@ -33,28 +33,29 @@ public class ConcurrentCache<K, V> {
                 }
                 for (Map.Entry<K, Node<V>> entry : map.entrySet()) {
                     Node<V> vNode = entry.getValue();
-                    if (vNode.removal != null) {//Процесс удаления уже идет
-                        return;
-                    }
-                    long afterAccess = builder.getExpireAfterAccess(),
-                            afterWrite = builder.getExpireAfterWrite(),
-                            now = System.currentTimeMillis();
-                    if ((afterAccess != NESTED && now - vNode.refresh >= afterAccess) ||
-                            (afterWrite  != NESTED && now - vNode.start   >= afterWrite))
-                    {
-                       // vNode.refresh = REMOVAL;//задаю статус удаления
-                        vNode.removal = safeRemoval(entry.getKey(), vNode).thenApply(remove -> {
-                            if (remove) {
-                                //Проверяю, вдруг я уже где-то обновил значение
-                                if (vNode.removal != null) {
-                                    map.remove(entry.getKey());
+                    synchronized (vNode) {
+                        if (vNode.removal != null) {//Процесс удаления уже идет
+                            return;
+                        }
+                        long afterAccess = builder.getExpireAfterAccess(),
+                                afterWrite = builder.getExpireAfterWrite(),
+                                now = System.currentTimeMillis();
+                        if ((afterAccess != NESTED && now - vNode.refresh >= afterAccess) ||
+                                (afterWrite != NESTED && now - vNode.start >= afterWrite)) {
+                            // vNode.refresh = REMOVAL;//задаю статус удаления
+                            vNode.removal = safeRemoval(entry.getKey(), vNode).thenApply(remove -> {
+                                if (remove) {
+                                    //Проверяю, вдруг я уже где-то обновил значение
+                                    if (vNode.removal != null) {
+                                        map.remove(entry.getKey());
+                                    }
+                                } else {
+                                    vNode.refresh = System.currentTimeMillis();
                                 }
-                            } else {
                                 vNode.removal = null;
-                                vNode.refresh = System.currentTimeMillis();
-                            }
-                            return remove;
-                        });
+                                return remove;
+                            });
+                        }
                     }
                 }
             }
@@ -66,19 +67,21 @@ public class ConcurrentCache<K, V> {
     public CompletableFuture<V> get(K key) {
         Node<V> vNode = map.get(key);
         if(vNode != null) {
-            CompletableFuture<Boolean> removal = vNode.removal;
-            if (removal != null) {
-                vNode.removal = null;
+            vNode.refresh = System.currentTimeMillis();
+            CompletableFuture<Boolean> removal;
+            if ((removal = vNode.removal) != null) {
                 if (removal.isDone() && removal.join()) {
                     map.put(key, vNode);
                 } else {
-                    removal.cancel(true);
-                    if (!map.containsKey(key)) {
-                        map.put(key, vNode);
+                    synchronized (vNode) {
+                        removal.cancel(true);
+                        if (!map.containsKey(key)) {
+                            map.put(key, vNode);
+                        }
+                        vNode.removal = null;
                     }
                 }
             }
-            vNode.refresh = System.currentTimeMillis();
         } else {
             vNode = new Node<>(cacheLoader.asyncLoad(key, builder.getExecutor()));
             map.put(key, vNode);
@@ -87,19 +90,27 @@ public class ConcurrentCache<K, V> {
     }
     public CompletableFuture<Boolean> remove(K key) {
         Node<V> node = map.get(key);
+        if (node == null) {
+            return CompletableFuture.completedFuture(false);
+        }
         CompletableFuture<Boolean> cf;
         if ((cf = node.removal) != null) {
             return cf;
         }
-        return node.removal = safeRemoval(key, node).thenApply(b -> {
-            if(b) {
-                map.remove(key);
-            } else {
-                node.removal = null;
-                node.refresh = System.currentTimeMillis();
+        synchronized (node) {
+            if ((cf = node.removal) != null) {
+                return cf;
             }
-            return b;
-        });
+            return node.removal = safeRemoval(key, node).thenApply(b -> {
+                if (b) {
+                    map.remove(key);
+                } else {
+                    node.refresh = System.currentTimeMillis();
+                }
+                node.removal = null;
+                return b;
+            });
+        }
     }
     public CompletableFuture<Boolean> removePoxyu(K key) {
         return safeRemoval(key, map.remove(key));
@@ -119,18 +130,20 @@ public class ConcurrentCache<K, V> {
                     }
                 });
             } else {
-                node.removal = safeRemoval(key, node).thenApply(erase -> {
-                    if (erase) {
-                        if (node.removal != null) {
-                            map.remove(key);
-                            cf.complete(null);
+                synchronized (node) {
+                    node.removal = safeRemoval(key, node).thenApply(erase -> {
+                        if (erase) {
+                            if (node.removal != null) {
+                                map.remove(key);
+                                cf.complete(null);
+                            }
+                        } else {
+                            node.refresh = System.currentTimeMillis();
                         }
-                    } else {
                         node.removal = null;
-                        node.refresh = System.currentTimeMillis();
-                    }
-                    return erase;
-                });
+                        return erase;
+                    });
+                }
             }
             cfs.add(cf);
         }
@@ -139,7 +152,7 @@ public class ConcurrentCache<K, V> {
     private static class Node<V> {
         private final CompletableFuture<V> cf;
         private final long start = System.currentTimeMillis();
-        private long refresh = start;
+        private volatile long refresh = start;
         private volatile CompletableFuture<Boolean> removal;//todo: atomic
 
         public Node(CompletableFuture<V> cf) {
